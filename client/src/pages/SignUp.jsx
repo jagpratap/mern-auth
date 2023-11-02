@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { id, value } = event.target;
@@ -30,15 +32,14 @@ export default function SignUp() {
       if (data.success === false) {
         throw new Error(data.message);
       }
+      navigate("/sign-in");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setError(true);
     } finally {
       setLoading(false);
     }
   };
-
-  console.log(error);
 
   return (
     <div className="mx-auto max-w-lg p-3">
