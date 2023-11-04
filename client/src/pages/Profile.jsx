@@ -11,6 +11,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserFailure,
+  deleteUserSuccess,
 } from "../redux/user/userSlice";
 
 import { app } from "../firebase";
@@ -80,6 +83,22 @@ function Profile() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        throw new Error(data.message);
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error));
+    }
+  };
+
   return (
     <div className="mx-auto max-w-lg p-3">
       <h1 className="my-7 text-center text-3xl font-semibold">Profile</h1>
@@ -138,7 +157,12 @@ function Profile() {
         </button>
       </form>
       <div className="mt-5 flex justify-between">
-        <span className="cursor-pointer text-red-700">Delete Account</span>
+        <span
+          onClick={handleDeleteAccount}
+          className="cursor-pointer text-red-700"
+        >
+          Delete Account
+        </span>
         <span className="cursor-pointer text-red-700">Sign out</span>
       </div>
       <p className="mt-5 text-red-700">{error && "Something went wrong!"}</p>
